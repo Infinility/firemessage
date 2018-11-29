@@ -21,6 +21,10 @@ class LoginActivity : AppCompatActivity() {
             login()
         }
 
+        tvBackToSignup.setOnClickListener {
+            finish()
+        }
+
     }
 
     private fun login(){
