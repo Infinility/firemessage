@@ -10,24 +10,25 @@ import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+//import kotlin.collections.HashMap
 
 class SignupActivity : AppCompatActivity() {
 
-    val tag: String = "Signup"
+    val TAG: String = "Signup"
+    var photoUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         btnRegister.setOnClickListener {
             //Register new user
-           registerNewUser()
+            createNewUser()
         }
-
 
         tvLogin.setOnClickListener {
             //Go to login screen
@@ -37,14 +38,11 @@ class SignupActivity : AppCompatActivity() {
 
         btnSelectPhoto.setOnClickListener {
             //Show photo selector
-
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(intent,0)
         }
     }
-
-    var photoUri: Uri? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -53,12 +51,16 @@ class SignupActivity : AppCompatActivity() {
             photoUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, photoUri)
 
-            val bitmapDrawable = BitmapDrawable(bitmap)
-            btnSelectPhoto.setBackgroundDrawable(bitmapDrawable)
+//            val bitmapDrawable = BitmapDrawable(bitmap)
+//            btnSelectPhoto.setBackgroundDrawable(bitmapDrawable)
+
+            circleViewPhoto.setImageBitmap(bitmap)
+            btnSelectPhoto.alpha = 0f
         }
     }
 
-    private fun registerNewUser(){
+    private fun createNewUser(){
+        val username = etUsername.text.toString()
         val email = etEmail.text.toString()
         val password = etPassword.text.toString()
 
@@ -72,27 +74,66 @@ class SignupActivity : AppCompatActivity() {
                 .addOnCompleteListener {
                     if (!it.isSuccessful) return@addOnCompleteListener
 
-                    Log.d(tag, "Successful login. User id = ${it.result?.user?.uid}")
+                    Log.d(TAG, "Successful login. User id = ${it.result?.user?.uid}")
 
-                    uploadImageToFirebase()
+                    saveUserToFirebase(username, email)
                 }
                 .addOnFailureListener {
-                    Log.d(tag, "Error: ${it.message}")
+                    Log.d(TAG, "Error: ${it.message}")
                     Snackbar.make(findViewById(R.id.mainConstraintLayout),"Couldn't create user: ${it.message}",
                             Snackbar.LENGTH_LONG)
                             .show()
                 }
     }
 
-    private fun uploadImageToFirebase(){
-        if (photoUri == null) return
+    private fun saveUserToFirebase(username: String, email: String){
+        val uid = FirebaseAuth.getInstance().uid ?: ""
 
-        val filename = UUID.randomUUID().toString()
-        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
+        if (photoUri == null) {
+            val user = HashMap<String, String>()
+            user.put("uid", uid)
+            user.put("username", username)
+            user.put("email", email)
 
-        ref.putFile(photoUri!!)
-                .addOnSuccessListener {
-                    Log.d(tag, "Successfully uploaded image: ${it.metadata.path}")
-                }
+            FirebaseFirestore.getInstance().collection("users")
+                    .add(user as Map<String, Any>)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
+                    }
+                    .addOnFailureListener {
+                        Log.w(TAG, "Error adding document", it)
+                    }
+        }else{
+            val filename = UUID.randomUUID().toString()
+            val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
+            var photoUrl: String = ""
+
+            ref.putFile(photoUri!!)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Successfully uploaded image: ${it.metadata?.path}")
+
+                        ref.downloadUrl.addOnSuccessListener {
+                            photoUrl = it.toString()
+                            Log.d(TAG, "Download URL: $it")
+                            val user = HashMap<String, String>()
+                            user.put("uid", uid)
+                            user.put("username", username)
+                            user.put("email", email)
+                            user.put("photourl", photoUrl)
+
+                            FirebaseFirestore.getInstance().collection("users")
+                                    .add(user as Map<String, Any>)
+                                    .addOnSuccessListener {
+                                        Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
+                                    }
+                                    .addOnFailureListener {
+                                        Log.w(TAG, "Error adding document", it)
+                                    }
+                        }
+                    }
+                    .addOnFailureListener {
+                        Log.d(TAG, "Successfully uploaded image: ${it.message}")
+                    }
+        }
     }
 }

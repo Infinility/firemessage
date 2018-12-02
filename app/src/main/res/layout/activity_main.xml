@@ -10,8 +10,8 @@
 
     <ImageButton
         android:id="@+id/btnSelectPhoto"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
@@ -19,6 +19,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circleViewPhoto"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:civ_border_width="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSelectPhoto"
+        app:layout_constraintEnd_toEndOf="@+id/btnSelectPhoto"
+        app:layout_constraintStart_toStartOf="@+id/btnSelectPhoto"
+        app:layout_constraintTop_toTopOf="@+id/btnSelectPhoto" />
 
     <EditText
         android:id="@+id/etUsername"
