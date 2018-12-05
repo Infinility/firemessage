@@ -2,19 +2,19 @@ package com.sourtime.www.firemessage
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
 import android.provider.MediaStore
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
-//import kotlin.collections.HashMap
 
 class SignupActivity : AppCompatActivity() {
 
@@ -50,9 +50,6 @@ class SignupActivity : AppCompatActivity() {
         if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null){
             photoUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, photoUri)
-
-//            val bitmapDrawable = BitmapDrawable(bitmap)
-//            btnSelectPhoto.setBackgroundDrawable(bitmapDrawable)
 
             circleViewPhoto.setImageBitmap(bitmap)
             btnSelectPhoto.alpha = 0f
@@ -99,6 +96,7 @@ class SignupActivity : AppCompatActivity() {
                     .add(user as Map<String, Any>)
                     .addOnSuccessListener {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
+                        goToLatestMessages()
                     }
                     .addOnFailureListener {
                         Log.w(TAG, "Error adding document", it)
@@ -125,6 +123,7 @@ class SignupActivity : AppCompatActivity() {
                                     .add(user as Map<String, Any>)
                                     .addOnSuccessListener {
                                         Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
+                                        goToLatestMessages()
                                     }
                                     .addOnFailureListener {
                                         Log.w(TAG, "Error adding document", it)
@@ -136,4 +135,15 @@ class SignupActivity : AppCompatActivity() {
                     }
         }
     }
+
+    private fun goToLatestMessages(){
+        val intent = Intent(this, LatestMessagesActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+}
+
+@Parcelize
+class User(val uid: String, val username: String, val email: String, val photourl: String) : Parcelable{
+    constructor() : this("","","","")
 }
