@@ -1,5 +1,6 @@
 package com.sourtime.www.firemessage
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -33,6 +34,8 @@ class LoginActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener {
                     Log.d(tag, "Login successful")
+                    val intent = Intent(this,LatestMessagesActivity::class.java)
+                    startActivity(intent)
                 }
                 .addOnFailureListener {
                     Log.d(tag, "Login failed")

@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.sourtime.www.firemessage.NewMessageActivity.Companion.USER_KEY
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.Group
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -17,7 +18,8 @@ import kotlinx.android.synthetic.main.item_chatlog_users_message.view.*
 
 class ChatLogActivity : AppCompatActivity() {
     val TAG = "ChatLogActivity"
-//    val adapter = GroupAdapter<ViewHolder>()
+    var adapter = GroupAdapter<ViewHolder>()
+    var friend: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,11 +29,9 @@ class ChatLogActivity : AppCompatActivity() {
 
 //        recyclerview_chatlog.adapter = adapter
 
-        val user = intent.getParcelableExtra<User>(USER_KEY)
+        friend = intent.getParcelableExtra<User>(USER_KEY)
 
-        supportActionBar?.title = user.username
-
-        fetchChat()
+        supportActionBar?.title = friend?.username
 
         sendButton_chatlog.setOnClickListener {
             sendMessage()
@@ -41,11 +41,10 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
     private fun listenForMessages() {
-        val friend = intent.getParcelableExtra<User>(USER_KEY)
-
-        val db = FirebaseFirestore.getInstance().collection("messages")
-//        db.orderBy("datetime", Query.Direction.ASCENDING)
         val userid = FirebaseAuth.getInstance().uid
+
+        val db = FirebaseFirestore.getInstance().collection("user_messages/${userid}/${friend!!.uid}")
+//        db.orderBy("datetime", Query.Direction.ASCENDING)
 
         db.orderBy("datetime", Query.Direction.ASCENDING)
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -53,18 +52,20 @@ class ChatLogActivity : AppCompatActivity() {
                         Log.e(TAG, "error: $firebaseFirestoreException")
                         return@addSnapshotListener
                     }
-                    val adapter = GroupAdapter<ViewHolder>()
+                    adapter = GroupAdapter<ViewHolder>()
+//                    adapter.add()
 
                     for (doc in querySnapshot!!){
-                        if ((doc.get("fromid")== userid) && (doc.get("toid") == friend.uid)){
-                                    adapter.add(ChatUserItem(doc.get("message").toString()))
+                        if ((doc.get("fromid")== userid) && (doc.get("toid") == friend?.uid)){
+                            val user = LatestMessagesActivity.currentUser
+                                    adapter.add(ChatUserItem(doc.get("message").toString(),user))
                             Log.d(TAG, "from user: $userid")
 
                         }
 
-                        else if((doc.get("fromid")== friend.uid) && (doc.get("toid") == userid)){
-                            adapter.add(ChatFriendItem(doc.get("message").toString()))
-                            Log.d(TAG, "from friend: ${friend.uid}")
+                        else if((doc.get("fromid")== friend?.uid) && (doc.get("toid") == userid)){
+                            adapter.add(ChatFriendItem(doc.get("message").toString(),friend))
+                            Log.d(TAG, "from friend: ${friend?.uid}")
 
                         }
                         Log.d(TAG, "doc id: ${doc.id}")
@@ -75,62 +76,100 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
 
-    private fun fetchChat() {
-//        val adapter = GroupAdapter<ViewHolder>()
-//
-//
-//        recyclerview_chatlog.adapter = adapter
-    }
+
 
     private fun sendMessage() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
 
         if (uid == "") return
 
-        val user = intent.getParcelableExtra<User>(USER_KEY)
 
         val message = HashMap<String, Any>()
         Log.d(TAG, "fromid: $uid")
-        Log.d(TAG, "toid: ${user.uid}")
+        Log.d(TAG, "toid: ${friend?.uid}")
         Log.d(TAG, "message: ${editText_chatlog.text.toString()}")
         Log.d(TAG, "datetime: ${System.currentTimeMillis()}")
 
         message.put("fromid", uid)
-        message.put("toid", user.uid)
+        message.put("toid", friend!!.uid)
         message.put("message", editText_chatlog.text.toString())
         message.put("datetime", System.currentTimeMillis())
 
-        FirebaseFirestore.getInstance().collection("messages")
+//        val data = HashMap<String, Any>()
+
+
+
+
+        FirebaseFirestore.getInstance().collection("user_messages/${uid}/${friend!!.uid}")
+                .add(message as Map<String, Any>)
+                .addOnSuccessListener {
+                    Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Error adding document", it)
+                }
+
+        FirebaseFirestore.getInstance().collection("user_messages/${friend!!.uid}/${uid}")
                 .add(message as Map<String, Any>)
                 .addOnSuccessListener {
                     Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
                     editText_chatlog.setText("")
+                    recyclerview_chatlog.scrollToPosition(adapter.itemCount - 1)
                 }
                 .addOnFailureListener {
                     Log.w(TAG, "Error adding document", it)
 
                 }
+
+        FirebaseFirestore.getInstance().collection("latest_messages/${uid}/${friend!!.uid}")
+                .add(message as Map<String, Any>)
+                .addOnSuccessListener {
+                    Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Error adding document", it)
+                }
+
+        FirebaseFirestore.getInstance().collection("latest_messages/${friend!!.uid}/${uid}")
+                .add(message as Map<String, Any>)
+                .addOnSuccessListener {
+                    Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Error adding document", it)
+                }
     }
 }
 
 
-class ChatFriendItem(val msg: String): Item<ViewHolder>() {
+class ChatFriendItem(val msg: String, val user: User?): Item<ViewHolder>() {
     override fun getLayout(): Int {
         return R.layout.item_chatlog_friends_message
     }
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_chatlog_friends_message.text = msg
+
+        val uri = user?.photourl ?: ""
+
+        if (uri != ""){
+            Picasso.get().load(uri).into(viewHolder.itemView.imageView_chatlog_friend)
+        }
     }
 }
 
 
-class ChatUserItem(val msg: String): Item<ViewHolder>() {
+class ChatUserItem(val msg: String, val user: User?): Item<ViewHolder>() {
     override fun getLayout(): Int {
         return R.layout.item_chatlog_users_message
     }
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_chatlog_user.text = msg
+
+        val uri = user?.photourl ?: ""
+        if (uri != ""){
+            Picasso.get().load(uri).into(viewHolder.itemView.imageView_chatlog_user)
+        }
     }
 }
