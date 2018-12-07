@@ -4,9 +4,13 @@
 
     <item android:id="@+id/menu_new_msg"
         android:title="New Message"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_add"
+
+        />
     <item android:id="@+id/menu_sign_out"
         android:title="Sign out"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        />
 
 </menu>
