@@ -36,6 +36,7 @@ class LoginActivity : AppCompatActivity() {
                     Log.d(tag, "Login successful")
                     val intent = Intent(this, LatestMessagesActivity::class.java)
                     startActivity(intent)
+                    finish()
                 }
                 .addOnFailureListener {
                     Log.d(tag, "Login failed")

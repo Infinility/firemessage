@@ -3,12 +3,14 @@ package com.sourtime.www.firemessage.activities
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sourtime.www.firemessage.R
+import com.sourtime.www.firemessage.R.id.recyclerView_latest_messages
 import com.sourtime.www.firemessage.models.Message
 import com.sourtime.www.firemessage.models.User
 import com.squareup.picasso.Picasso
@@ -31,11 +33,24 @@ class LatestMessagesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
 
+        supportActionBar?.title = "Recent"
+//        supportActionBar?.
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        supportActionBar?.setLogo(R.mipmap.menu_logo)
+//        supportActionBar?.setDisplayUseLogoEnabled(true)
+//        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+
         listenForLatestMessages()
 
         fetchCurrentUser()
 
         verifyUserLoggedIn()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        System.exit(0)
     }
 
     private fun listenForLatestMessages() {
@@ -106,7 +121,10 @@ class LatestMessagesActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
 
+
                         recyclerView_latest_messages.adapter = adapter
+                        recyclerView_latest_messages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
                     }
                 }
                 .addOnFailureListener {

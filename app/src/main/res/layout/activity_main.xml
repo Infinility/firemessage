@@ -5,7 +5,7 @@
     android:id="@+id/mainConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#45abcd"
+    android:background="@android:color/white"
     tools:context=".activities.SignupActivity">
 
     <ImageButton
@@ -96,7 +96,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Log in"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/btnRegister"

@@ -2,6 +2,7 @@ package com.sourtime.www.firemessage.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -69,8 +70,9 @@ class ChatLogActivity : AppCompatActivity() {
                         }
                         Log.d(TAG, "doc id: ${doc.id}")
                     }
-                    recyclerview_chatlog.adapter = adapter
 
+                    recyclerview_chatlog.adapter = adapter
+                    recyclerview_chatlog.scrollToPosition(adapter.itemCount - 1 )
         }
     }
 

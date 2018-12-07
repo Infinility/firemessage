@@ -2,15 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/menu_new_msg"
-        android:title="New Message"
-        app:showAsAction="ifRoom"
+    <item
+        android:id="@+id/menu_new_msg"
         android:icon="@android:drawable/ic_menu_add"
+        android:iconTint="@color/common_google_signin_btn_text_dark"
+        android:title="New Message"
 
-        />
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/menu_sign_out"
         android:title="Sign out"
-        app:showAsAction="ifRoom"
+        app:showAsAction="collapseActionView"
         />
 
 </menu>
