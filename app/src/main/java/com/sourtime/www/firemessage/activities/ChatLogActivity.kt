@@ -29,7 +29,6 @@ class ChatLogActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Chat Log"
 
-//        recyclerview_chatlog.adapter = adapter
 
         friend = intent.getParcelableExtra<User>(USER_KEY)
 
@@ -46,7 +45,6 @@ class ChatLogActivity : AppCompatActivity() {
         val userid = FirebaseAuth.getInstance().uid
 
         val db = FirebaseFirestore.getInstance().collection("user_messages/${userid}/${friend!!.uid}")
-//        db.orderBy
 
         db.orderBy("datetime", Query.Direction.ASCENDING)
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -55,7 +53,6 @@ class ChatLogActivity : AppCompatActivity() {
                         return@addSnapshotListener
                     }
                     adapter = GroupAdapter<ViewHolder>()
-//                    adapter.add()
 
                     for (doc in querySnapshot!!){
                         if ((doc.get("fromid")== userid) && (doc.get("toid") == friend?.uid)){

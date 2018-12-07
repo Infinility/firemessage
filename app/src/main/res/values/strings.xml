@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">FireMessage</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="app_name">Fire Message</string>
+    <string name="title_activity_login">Login</string>
 </resources>

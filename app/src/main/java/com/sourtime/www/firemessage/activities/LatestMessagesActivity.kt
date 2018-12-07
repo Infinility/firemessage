@@ -36,16 +36,13 @@ class LatestMessagesActivity : AppCompatActivity() {
         fetchCurrentUser()
 
         verifyUserLoggedIn()
-
     }
 
     private fun listenForLatestMessages() {
         val uid = FirebaseAuth.getInstance().uid
 
-
         val dbRef = FirebaseFirestore.getInstance().collection("latest_messages")
                 .document("$uid")
-
 
         dbRef.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
             if (firebaseFirestoreException != null) {
@@ -54,17 +51,13 @@ class LatestMessagesActivity : AppCompatActivity() {
             }
 
             if (documentSnapshot != null && documentSnapshot.exists()) {
-//                Log.d(TAG, "Current data: " + documentSnapshot.data)
                 val latestmessages = documentSnapshot.data
 
                 if (latestmessages == null) return@addSnapshotListener
 
                 adapter = GroupAdapter<ViewHolder>()
                 for((key,value) in latestmessages) {
-//                    Log.d(TAG, "message: ${value}")
                     val mapmsg = value as HashMap<String, Any>
-//                    mapmsg["message"]
-//                    Log.d(TAG, "message text: ${mapmsg["message"]}")
 
                     val message = Message(mapmsg["fromid"].toString(), mapmsg["toid"].toString(), mapmsg["message"].toString(), mapmsg["timestamp"] as Long?)
 
@@ -78,15 +71,7 @@ class LatestMessagesActivity : AppCompatActivity() {
                     }
 
                     updateAdapter(userid, message)
-//                    Log.d(TAG, "user id: ${user.uid}")
-//                    Log.d(TAG, "user photo: ${user.photourl}")
-
-
-//                    adapter.add(LatestMessageRow(user,message))
-
                 }
-//                recyclerView_latest_messages.adapter = adapter
-
             }
             else {
                 Log.d(TAG, "No such document")
@@ -106,7 +91,6 @@ class LatestMessagesActivity : AppCompatActivity() {
                         val email = document.data.getOrElse("email"){""}
                         val photourl = document.data.getOrElse("photourl"){""}
 
-//                        user = document.toObject(User::class.java)
 
                         user = User(uid.toString(),username.toString(),email.toString(),photourl.toString())
                         Log.d(TAG, "user's id: ${user.uid}")
@@ -114,13 +98,11 @@ class LatestMessagesActivity : AppCompatActivity() {
                         adapter.add(LatestMessageRow(user, message))
 
                         recyclerView_latest_messages.adapter = adapter
-//                        Log.d(TAG, "userid: ${user.uid} useremail: ${user.email} username: ${user.username} userphoto: ${user.photourl}")
                     }
                 }
                 .addOnFailureListener {
                     Log.d(TAG, "Failed to get user: ${it}")
                 }
-//        return user
     }
 
 

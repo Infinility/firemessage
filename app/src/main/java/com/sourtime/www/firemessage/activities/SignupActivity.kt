@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class SignupActivity : AppCompatActivity() {
-
     val TAG: String = "Signup"
     var photoUri: Uri? = null
 
