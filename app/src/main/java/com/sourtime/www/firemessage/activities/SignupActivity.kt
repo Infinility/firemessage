@@ -1,10 +1,9 @@
-package com.sourtime.www.firemessage
+package com.sourtime.www.firemessage.activities
 
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -12,7 +11,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.parcel.Parcelize
+import com.sourtime.www.firemessage.R
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -143,7 +142,4 @@ class SignupActivity : AppCompatActivity() {
     }
 }
 
-@Parcelize
-class User(val uid: String, val username: String, val email: String, val photourl: String) : Parcelable{
-    constructor() : this("","","","")
-}
+

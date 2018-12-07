@@ -1,10 +1,12 @@
-package com.sourtime.www.firemessage
+package com.sourtime.www.firemessage.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.sourtime.www.firemessage.R
+import com.sourtime.www.firemessage.models.User
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -55,8 +57,7 @@ class NewMessageActivity : AppCompatActivity() {
                     adapter.setOnItemClickListener { item, view ->
                         val userItem = item as UserItem
 
-
-                        val intent = Intent(view.context,ChatLogActivity::class.java)
+                        val intent = Intent(view.context, ChatLogActivity::class.java)
                         intent.putExtra(USER_KEY,userItem.user)
 
                         startActivity(intent)

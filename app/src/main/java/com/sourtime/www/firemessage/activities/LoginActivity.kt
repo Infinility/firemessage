@@ -1,12 +1,12 @@
-package com.sourtime.www.firemessage
+package com.sourtime.www.firemessage.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.sourtime.www.firemessage.R
 
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.content_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -34,7 +34,7 @@ class LoginActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener {
                     Log.d(tag, "Login successful")
-                    val intent = Intent(this,LatestMessagesActivity::class.java)
+                    val intent = Intent(this, LatestMessagesActivity::class.java)
                     startActivity(intent)
                 }
                 .addOnFailureListener {

@@ -1,4 +1,4 @@
-package com.sourtime.www.firemessage
+package com.sourtime.www.firemessage.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -6,9 +6,11 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.sourtime.www.firemessage.NewMessageActivity.Companion.USER_KEY
+import com.google.firebase.firestore.SetOptions
+import com.sourtime.www.firemessage.activities.NewMessageActivity.Companion.USER_KEY
+import com.sourtime.www.firemessage.R
+import com.sourtime.www.firemessage.models.User
 import com.squareup.picasso.Picasso
-import com.xwray.groupie.Group
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -44,7 +46,7 @@ class ChatLogActivity : AppCompatActivity() {
         val userid = FirebaseAuth.getInstance().uid
 
         val db = FirebaseFirestore.getInstance().collection("user_messages/${userid}/${friend!!.uid}")
-//        db.orderBy("datetime", Query.Direction.ASCENDING)
+//        db.orderBy
 
         db.orderBy("datetime", Query.Direction.ASCENDING)
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -58,13 +60,13 @@ class ChatLogActivity : AppCompatActivity() {
                     for (doc in querySnapshot!!){
                         if ((doc.get("fromid")== userid) && (doc.get("toid") == friend?.uid)){
                             val user = LatestMessagesActivity.currentUser
-                                    adapter.add(ChatUserItem(doc.get("message").toString(),user))
+                                    adapter.add(ChatUserItem(doc.get("message").toString(), user))
                             Log.d(TAG, "from user: $userid")
 
                         }
 
                         else if((doc.get("fromid")== friend?.uid) && (doc.get("toid") == userid)){
-                            adapter.add(ChatFriendItem(doc.get("message").toString(),friend))
+                            adapter.add(ChatFriendItem(doc.get("message").toString(), friend))
                             Log.d(TAG, "from friend: ${friend?.uid}")
 
                         }
@@ -76,13 +78,10 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
 
-
-
     private fun sendMessage() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
 
         if (uid == "") return
-
 
         val message = HashMap<String, Any>()
         Log.d(TAG, "fromid: $uid")
@@ -94,11 +93,6 @@ class ChatLogActivity : AppCompatActivity() {
         message.put("toid", friend!!.uid)
         message.put("message", editText_chatlog.text.toString())
         message.put("datetime", System.currentTimeMillis())
-
-//        val data = HashMap<String, Any>()
-
-
-
 
         FirebaseFirestore.getInstance().collection("user_messages/${uid}/${friend!!.uid}")
                 .add(message as Map<String, Any>)
@@ -121,23 +115,19 @@ class ChatLogActivity : AppCompatActivity() {
 
                 }
 
-        FirebaseFirestore.getInstance().collection("latest_messages/${uid}/${friend!!.uid}")
-                .add(message as Map<String, Any>)
-                .addOnSuccessListener {
-                    Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
-                }
-                .addOnFailureListener {
-                    Log.w(TAG, "Error adding document", it)
-                }
+        val latestMsgForUser = HashMap<String, Any>()
+        latestMsgForUser["${friend!!.uid}"] = message
+        FirebaseFirestore.getInstance().collection("latest_messages").document("${uid}")
+                .set(latestMsgForUser, SetOptions.merge())
+                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
 
-        FirebaseFirestore.getInstance().collection("latest_messages/${friend!!.uid}/${uid}")
-                .add(message as Map<String, Any>)
-                .addOnSuccessListener {
-                    Log.d(TAG, "DocumentSnapshot added with ID: " + it.getId())
-                }
-                .addOnFailureListener {
-                    Log.w(TAG, "Error adding document", it)
-                }
+        val latestMsgForFriend = HashMap<String, Any>()
+        latestMsgForFriend["${uid}"] = message
+        FirebaseFirestore.getInstance().collection("latest_messages").document("${friend!!.uid}")
+                .set(latestMsgForFriend, SetOptions.merge())
+                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
     }
 }
 
