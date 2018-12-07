@@ -97,6 +97,15 @@ class LatestMessagesActivity : AppCompatActivity() {
 
                         adapter.add(LatestMessageRow(user, message))
 
+                        adapter.setOnItemClickListener { item, view ->
+                            val userItem = item as LatestMessageRow
+
+                            val intent = Intent(view.context, ChatLogActivity::class.java)
+                            intent.putExtra(NewMessageActivity.USER_KEY,userItem.user)
+
+                            startActivity(intent)
+                        }
+
                         recyclerView_latest_messages.adapter = adapter
                     }
                 }
