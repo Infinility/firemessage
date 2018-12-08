@@ -123,7 +123,7 @@ class LatestMessagesActivity : AppCompatActivity() {
 
 
                         recyclerView_latest_messages.adapter = adapter
-                        recyclerView_latest_messages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+//                        recyclerView_latest_messages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
                     }
                 }
