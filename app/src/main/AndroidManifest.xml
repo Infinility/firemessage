@@ -30,7 +30,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.LatestMessagesActivity" />
         </activity>
-        <activity android:name=".activities.ChatLogActivity">
+        <activity android:name=".activities.ChatLogActivity"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.LatestMessagesActivity" />

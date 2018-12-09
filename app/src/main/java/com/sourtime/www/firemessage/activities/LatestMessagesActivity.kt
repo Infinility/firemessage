@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sourtime.www.firemessage.R
@@ -46,6 +47,11 @@ class LatestMessagesActivity : AppCompatActivity() {
         fetchCurrentUser()
 
         verifyUserLoggedIn()
+
+        fab_send_message.setOnClickListener {
+            val intent = Intent(this, NewMessageActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onBackPressed() {
@@ -164,10 +170,10 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
-            R.id.menu_new_msg -> {
-                val intent = Intent(this, NewMessageActivity::class.java)
-                startActivity(intent)
-            }
+//            R.id.menu_new_msg -> {
+//                val intent = Intent(this, NewMessageActivity::class.java)
+//                startActivity(intent)
+//            }
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
                 verifyUserLoggedIn()
