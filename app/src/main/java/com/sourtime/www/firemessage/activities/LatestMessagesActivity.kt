@@ -90,7 +90,6 @@ class LatestMessagesActivity : AppCompatActivity() {
                         userid = mapmsg["fromid"].toString()
                         Log.d(TAG, "latest is friend: $userid")
                     }
-
                     updateAdapter(userid, message)
                 }
             }
@@ -127,10 +126,8 @@ class LatestMessagesActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
 
-
                         recyclerView_latest_messages.adapter = adapter
 //                        recyclerView_latest_messages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-
                     }
                 }
                 .addOnFailureListener {
