@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.sourtime.www.firemessage.R
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.*
 
 class SignupActivity : AppCompatActivity() {
@@ -21,7 +21,7 @@ class SignupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_signup)
 
         btnRegister.setOnClickListener {
             //Register new user

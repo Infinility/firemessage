@@ -30,7 +30,6 @@ class ChatLogActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Chat Log"
 
-
         friend = intent.getParcelableExtra<User>(USER_KEY)
 
         supportActionBar?.title = friend?.username
@@ -140,7 +139,6 @@ class ChatFriendItem(val msg: String, val user: User?): Item<ViewHolder>() {
         viewHolder.itemView.textView_chatlog_friends_message.text = msg
 
         val uri = user?.photourl ?: ""
-
         if (uri != ""){
             Picasso.get().load(uri).into(viewHolder.itemView.imageView_chatlog_friend)
         }
